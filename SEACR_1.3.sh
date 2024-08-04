@@ -142,10 +142,10 @@ echo "Creating thresholded feature file: $(date)"
 if [[ $height == "relaxed" ]]
 then
   echo "Empirical false discovery rate = $fdr2"
-  awk -v value=$thresh2 -v value2=$thresh3 '$4 > value && $7 > value2 {print $0}' $password.auc.bed | cut -f 1,2,3,4,5,6 > $password.auc.threshold.bed
+  awk -v value=$thresh2 -v value2=$thresh3 '$4 >= value && $7 >= value2 {print $0}' $password.auc.bed | cut -f 1,2,3,4,5,6 > $password.auc.threshold.bed
 else
   echo "Empirical false discovery rate = $fdr"
-  awk -v value=$thresh -v value2=$thresh3 '$4 > value && $7 > value2 {print $0}' $password.auc.bed | cut -f 1,2,3,4,5,6 > $password.auc.threshold.bed
+  awk -v value=$thresh -v value2=$thresh3 '$4 >= value && $7 >= value2 {print $0}' $password.auc.bed | cut -f 1,2,3,4,5,6 > $password.auc.threshold.bed
 fi
 
 if [[ -f $2 ]]
@@ -180,20 +180,20 @@ fi
 
 echo "Removing temporary files: $(date)"
 
-rm $password.auc.bed
-rm $password.auc
-rm $password.threshold.txt
-rm $password.auc.threshold.bed
-rm $password.fdr.txt  ## Added 5/15/19 for SEACR_1.1
-rm $5.auc.threshold.merge.bed
+mv $password.auc.bed $5.auc.bed
+mv $password.auc $5.auc
+mv $password.threshold.txt $5.threshold.txt
+mv $password.auc.threshold.bed $5.auc.threshold.bed
+mv $password.fdr.txt $5.fdr.txt  ## Added 5/15/19 for SEACR_1.1
+#rm $5.auc.threshold.merge.bed
 if [[ -f $2 ]]
 then
-	rm $password2.auc.bed
-	rm $password2.auc
-	rm $password2.auc.threshold.bed
+	mv $password2.auc.bed $5.ctrl.auc.bed
+	mv $password2.auc $5.ctrl.auc
+	mv $password2.auc.threshold.bed $5.ctrl.auc.threshold.bed
 fi
 if [[ $norm == "norm" ]]
 then
-	rm -f $password.norm.txt
+	mv $password.norm.txt $5.norm.txt
 fi
 echo "Done: $(date)"
